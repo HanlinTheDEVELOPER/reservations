@@ -1,0 +1,58 @@
+services:
+  reservation:
+    depends_on:
+      - mongodb
+    build:
+      context: .
+      dockerfile: ./apps/reservations/Dockerfile
+      target: builder
+    command: pnpm run start:dev reservation
+    ports:
+      - 3000:3000
+    env_file:
+      - ./apps/reservations/.env
+    volumes:
+      - .:/usr/src/app
+  auth:
+    depends_on:
+      - mongodb
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: builder
+    command: pnpm run start:dev auth
+    env_file:
+      - ./apps/auth/.env
+    ports:
+      - 3001:3001
+    volumes:
+      - .:/usr/src/app
+  payment:
+    build:
+      context: .
+      dockerfile: ./apps/payment/Dockerfile
+      target: builder
+    command: pnpm run start:dev payment
+    env_file:
+      - ./apps/payment/.env
+    volumes:
+      - .:/usr/src/app
+  notification:
+    build:
+      context: .
+      dockerfile: ./apps/notification/Dockerfile
+      target: builder
+    command: pnpm run start:dev notification
+    env_file:
+      - ./apps/notification/.env
+    volumes:
+      - .:/usr/src/app
+  mongodb:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+
+volumes:
+  mongodb:

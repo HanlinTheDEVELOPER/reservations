@@ -44,8 +44,12 @@ export class UserService {
     return this.userRepository.find({});
   }
 
-  findOne(id: string) {
-    return this.userRepository.findOne({ _id: new Types.ObjectId(id) });
+  async findOne(id: string) {
+    const user = await this.userRepository.findOne({
+      _id: new Types.ObjectId(id),
+    });
+    const { password, ...rest } = user;
+    return rest;
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {

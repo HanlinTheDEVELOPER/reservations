@@ -1,4 +1,4 @@
-import { PAYMENT_SERVICE, UserDto } from '@app/common';
+import { AUTH_SERVICE, PAYMENT_SERVICE, UserDto } from '@app/common';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Types } from 'mongoose';
@@ -12,6 +12,7 @@ export class ReservationsService {
   constructor(
     private readonly reservationRepository: ReservationRepository,
     @Inject(PAYMENT_SERVICE) private readonly paymentClient: ClientProxy,
+    @Inject(AUTH_SERVICE) private readonly authClient: ClientProxy,
   ) {}
 
   async create(
@@ -42,9 +43,25 @@ export class ReservationsService {
   }
 
   async findOne(id: string) {
-    return await this.reservationRepository.findOne({
+    const dataWithoutUser = await this.reservationRepository.findOne({
       _id: new Types.ObjectId(id),
     });
+    return this.authClient
+      .send('get_user', {
+        _id: dataWithoutUser.userId,
+      })
+      .pipe(
+        map((res) => {
+          const { userId, ...rest } = dataWithoutUser;
+          return {
+            ...rest,
+            user: res,
+          };
+        }),
+        catchError((err) => {
+          throw new BadRequestException(err);
+        }),
+      );
   }
 
   async update(id: string, updateReservationDto: UpdateReservationDto) {

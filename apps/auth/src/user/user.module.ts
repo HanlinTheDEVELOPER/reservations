@@ -4,16 +4,19 @@ import { UserDocument, UserSchema } from './models/user.schema';
 import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
+import { UserMicroserviceController } from './userMicroservice.controller';
 
 @Module({
   imports: [
     DatabaseModule,
     DatabaseModule.forFeature([
-      { name: UserDocument.name, schema: UserSchema },
+      {
+        name: UserDocument.name,
+        schema: UserSchema,
+      },
     ]),
   ],
-
-  controllers: [UserController],
+  controllers: [UserController, UserMicroserviceController],
   providers: [UserService, UserRepository],
   exports: [UserService],
 })

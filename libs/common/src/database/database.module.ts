@@ -11,10 +11,9 @@ import { ModelDefinition, MongooseModule } from '@nestjs/mongoose';
       inject: [ConfigService],
     }),
   ],
-  exports: [],
 })
 export class DatabaseModule {
-  static forFeature(models: ModelDefinition[]) {
-    return MongooseModule.forFeature(models);
+  static forFeature(model: ModelDefinition[]) {
+    return MongooseModule.forFeature(model);
   }
 }

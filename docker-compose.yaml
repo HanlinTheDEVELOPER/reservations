@@ -53,6 +53,19 @@ services:
       - 27017:27017
     volumes:
       - mongodb:/data/db
-
+  # place:
+  #   depends_on:
+  #     - mongodb
+  #   build:
+  #     context: .
+  #     dockerfile: ./apps/place/Dockerfile
+  #     target: builder
+  #   command: pnpm run start:dev place
+  #   env_file:
+  #     - ./apps/place/.env
+  #   ports:
+  #     - 3005:3005
+  #   volumes:
+  #     - .:/usr/src/app
 volumes:
   mongodb:
